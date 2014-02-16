@@ -1,0 +1,17 @@
+package com.hammingweight.zookeeperl;
+
+import org.apache.zookeeper.ZooKeeper;
+
+public class ZooKeeperNode {
+
+	private ZooKeeper zk;
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
