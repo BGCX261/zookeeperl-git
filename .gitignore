@@ -1,4 +1,4 @@
 .metadata/
 erlide.*
 rpc_monitor.dump
-
+zookeeperl-java/bin
