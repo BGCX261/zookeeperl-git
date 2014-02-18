@@ -1,9 +1,10 @@
 package com.hammingweight.zookeeperl;
 
 import com.ericsson.otp.erlang.OtpErlangObject;
+import com.ericsson.otp.erlang.OtpErlangPid;
 
 public interface IMessageProcessor {
 	
-	public OtpErlangObject processMessage(OtpErlangObject[] message) throws Throwable;
+	public void processMessage(OtpErlangPid sender, OtpErlangObject[] message) throws Throwable;
 
 }

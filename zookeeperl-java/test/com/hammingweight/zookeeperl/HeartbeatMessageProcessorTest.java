@@ -1,20 +1,21 @@
 package com.hammingweight.zookeeperl;
 
-import com.ericsson.otp.erlang.OtpErlangAtom;
-import com.ericsson.otp.erlang.OtpErlangObject;
-
 import junit.framework.TestCase;
+
+import com.ericsson.otp.erlang.OtpErlangObject;
+import com.ericsson.otp.erlang.OtpErlangPid;
 
 public class HeartbeatMessageProcessorTest extends TestCase {
 
-	private HeartbeatMessageProcessor cut;
+	private HeartbeatMessageProcessor messageProcessor;
+	private OtpErlangPid senderPid;
 	
 	public void setUp() {
-		this.cut = new HeartbeatMessageProcessor();
+		this.messageProcessor = new HeartbeatMessageProcessor();
 	}
 	
 	public void testResponse() {
-		OtpErlangObject response = this.cut.processMessage( new OtpErlangObject[0]);
-		assertEquals(new OtpErlangAtom("ok"), response);
+		this.messageProcessor.processMessage(this.senderPid, new OtpErlangObject[0]);
+		fail("Not yet done.");
 	}
 }
