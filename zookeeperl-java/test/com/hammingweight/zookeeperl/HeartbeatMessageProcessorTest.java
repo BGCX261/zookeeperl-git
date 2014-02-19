@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangPid;
+import com.ericsson.otp.erlang.OtpErlangTuple;
 
 public class HeartbeatMessageProcessorTest extends TestCase {
 
@@ -15,7 +16,7 @@ public class HeartbeatMessageProcessorTest extends TestCase {
 	}
 	
 	public void testResponse() {
-		this.messageProcessor.processMessage(this.senderPid, new OtpErlangObject[0]);
+		this.messageProcessor.processMessage(this.senderPid, null, new OtpErlangTuple(new OtpErlangObject[0]));
 		fail("Not yet done.");
 	}
 }
