@@ -7,14 +7,14 @@ import com.ericsson.otp.erlang.OtpErlangPid;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 import com.ericsson.otp.erlang.OtpMbox;
 
-public class HeartbeatMessageProcessorTest extends TestCase {
+public class HeartbeatProcessorTest extends TestCase {
 
-	private HeartbeatMessageProcessor messageProcessor;
+	private HeartbeatProcessor messageProcessor;
 	private OtpErlangPid senderPid;
 	
 	public void setUp() {
 		// Create a message processor with a mocked mailbox
-		this.messageProcessor = new HeartbeatMessageProcessor((OtpMbox) null);
+		this.messageProcessor = new HeartbeatProcessor((OtpMbox) null);
 	}
 	
 	public void testResponse() {

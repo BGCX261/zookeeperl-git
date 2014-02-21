@@ -7,15 +7,15 @@ import com.ericsson.otp.erlang.OtpErlangTuple;
 import com.ericsson.otp.erlang.OtpMbox;
 import com.ericsson.otp.erlang.OtpNode;
 
-public class HeartbeatMessageProcessor implements IMessageProcessor {
+public class HeartbeatProcessor implements IMessageProcessor {
 
 	private OtpMbox mailbox;
 	
-	HeartbeatMessageProcessor(OtpMbox mailbox) {
+	HeartbeatProcessor(OtpMbox mailbox) {
 		this.mailbox = mailbox;
 	}
 	
-	public HeartbeatMessageProcessor(OtpNode node) {
+	public HeartbeatProcessor(OtpNode node) {
 		this(node.createMbox("heartbeat"));
 	}
 	

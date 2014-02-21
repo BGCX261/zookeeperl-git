@@ -12,7 +12,7 @@ public class ZooKeeperlNode {
 		OtpNode node = new OtpNode("zookeeper");
 		OtpMbox mbox = node.createMbox("heartbeat");
 		
-		HeartbeatMessageProcessor heartbeat = new HeartbeatMessageProcessor(mbox);
+		HeartbeatProcessor heartbeat = new HeartbeatProcessor(mbox);
 		MessageProcessRunner heartbeatRunner = new MessageProcessRunner(mbox, heartbeat);
 		Thread t = new Thread(heartbeatRunner);
 		t.start();
