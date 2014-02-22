@@ -24,6 +24,7 @@ public class MessageProcessRunner implements Runnable {
 			OtpErlangTuple message = new OtpErlangTuple(msgElements, 2, msgElements.length - 2);
 			this.messageProcessor.processMessage(sender, uid, message);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			// TODO: log
 		}
 	}
