@@ -33,26 +33,17 @@ public class ZooKeeperProcess implements IMessageProcessor {
 			OtpErlangTuple message) throws Throwable {
 		OtpErlangObject[] messageAsArray = message.elements();
 
-		System.out.println(messageAsArray);
-		
 		// There should be 3 entries in the tuple
 		if (messageAsArray.length != 3) {
-			System.out.println(messageAsArray.length);
-			System.out.println(messageAsArray[0].getClass());
 			// TODO: log error
 			return;
 		}
-		System.out.println(messageAsArray[0]);
-		System.out.println(messageAsArray[1]);
-		System.out.println(messageAsArray[2]);
+
 		// The first entry in the tuple must be "open".
 		if (!((OtpErlangString)messageAsArray[0]).stringValue().equals("open")) {
 			// TODO: log error
-			System.out.println(((OtpErlangString)messageAsArray[0]).stringValue());
-			
 			return;
 		}
-		System.out.println("ok");
 		
 		String connectString = ((OtpErlangString)messageAsArray[1]).stringValue();
 		int sessionTimeout = ((OtpErlangLong)messageAsArray[2]).intValue();
