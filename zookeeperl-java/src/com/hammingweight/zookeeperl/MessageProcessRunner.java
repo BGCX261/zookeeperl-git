@@ -8,9 +8,9 @@ import com.ericsson.otp.erlang.OtpMbox;
 public class MessageProcessRunner implements Runnable {
 
 	private OtpMbox mailbox;
-	private IMessageProcessor messageProcessor;
+	private ZooKeeperProcess messageProcessor;
 	
-	public MessageProcessRunner(OtpMbox mailbox, IMessageProcessor messageProcessor) {
+	public MessageProcessRunner(OtpMbox mailbox, ZooKeeperProcess messageProcessor) {
 		this.mailbox = mailbox;
 		this.messageProcessor = messageProcessor;
 	}

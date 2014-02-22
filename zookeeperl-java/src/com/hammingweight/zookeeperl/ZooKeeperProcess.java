@@ -13,7 +13,7 @@ import com.ericsson.otp.erlang.OtpErlangTuple;
 import com.ericsson.otp.erlang.OtpMbox;
 import com.ericsson.otp.erlang.OtpNode;
 
-public class ZooKeeperProcess implements IMessageProcessor {
+public class ZooKeeperProcess {
 
 	ZooKeeper zooKeeper;
 	
@@ -59,7 +59,6 @@ public class ZooKeeperProcess implements IMessageProcessor {
 		System.out.println(this.zooKeeper);
 	}
 	
-	@Override
 	public void processMessage(OtpErlangPid sender, OtpErlangObject uid,
 			OtpErlangTuple message) throws Throwable {
 		if (this.zooKeeper == null) {
@@ -72,7 +71,6 @@ public class ZooKeeperProcess implements IMessageProcessor {
 		}
 	}
 
-	@Override
 	public OtpMbox getMbox() {
 		return this.mailbox;
 	}
