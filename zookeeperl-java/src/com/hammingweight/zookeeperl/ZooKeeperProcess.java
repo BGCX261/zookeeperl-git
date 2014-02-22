@@ -71,20 +71,6 @@ public class ZooKeeperProcess implements Runnable {
 		}
 	}
 
-/*	void processNextMessage() {
-		try {
-			OtpErlangTuple msg = (OtpErlangTuple) this.mailbox.receive();
-			OtpErlangObject[] msgElements = msg.elements();
-			OtpErlangPid sender = (OtpErlangPid) msgElements[0];
-			OtpErlangObject uid = msgElements[1];
-			OtpErlangTuple message = new OtpErlangTuple(msgElements, 2, msgElements.length - 2);
-			this.processMessage(sender, uid, message);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			// TODO: log
-		}
-	}*/
-	
 	public OtpMbox getMbox() {
 		return this.mailbox;
 	}
