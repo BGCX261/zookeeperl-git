@@ -111,7 +111,7 @@ public class ZooKeeperProcess implements Runnable {
 			this.processZooKeeperMessage(
 					sender,
 					((OtpErlangString) messageAsTuple[0]).stringValue(),
-					new OtpErlangTuple(messageAsTuple, 1, messageAsTuple.length));
+					new OtpErlangTuple(messageAsTuple, 1, messageAsTuple.length-1));
 		}
 	}
 

@@ -3,6 +3,7 @@ package com.hammingweight.zookeeperl.callbacks;
 import org.apache.zookeeper.AsyncCallback.StringCallback;
 
 import com.ericsson.otp.erlang.OtpErlangFun;
+import com.ericsson.otp.erlang.OtpErlangInt;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangPid;
 import com.ericsson.otp.erlang.OtpErlangString;
@@ -17,7 +18,7 @@ public class CreateCallback extends Callback implements StringCallback {
 	
 	@Override
 	public void processResult(int rc, String path, Object ctx, String name) {
-		OtpErlangObject[] response = new OtpErlangObject[]{this.fun, new OtpErlangString(path),
+		OtpErlangObject[] response = new OtpErlangObject[]{this.fun, new OtpErlangInt(rc), new OtpErlangString(path),
 				(OtpErlangObject) ctx, new OtpErlangString(name)};
 		
 		// TODO Auto-generated method stub
