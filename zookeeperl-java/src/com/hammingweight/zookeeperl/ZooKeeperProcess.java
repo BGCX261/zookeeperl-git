@@ -72,28 +72,46 @@ public class ZooKeeperProcess implements Runnable {
 	void create(OtpErlangPid sender, OtpErlangTuple paramsTuple)
 			throws Throwable {
 		OtpErlangObject[] params = paramsTuple.elements();
-		if (params.length != 6) {
+		if (params.length != 5) {
 			// TODO: log
 			return;
 		}
 		String path = ((OtpErlangString) params[0]).stringValue();
 		byte[] data = ((OtpErlangBinary) params[1]).binaryValue();
-		// TODO: Extract from param 2
 		List<ACL> acl = Ids.OPEN_ACL_UNSAFE;
-		// TODO: Extract this from the param 3
+		// TODO: Extract this from the param 2
 		CreateMode createMode = CreateMode.EPHEMERAL;
-		// Param 4 contains a fun that will be invoked
-		OtpErlangFun fun = (OtpErlangFun) params[4];
-		OtpErlangObject ctx = params[5];
+		// Param 3 contains a fun that will be invoked
+		OtpErlangFun fun = (OtpErlangFun) params[3];
+		OtpErlangObject ctx = params[4];
 		CreateCallback cb = new CreateCallback(this.mailbox, sender, fun);
 
 		this.zooKeeper.create(path, data, acl, createMode, cb, ctx);
+	}
+
+	void createSync(OtpErlangPid sender, OtpErlangTuple paramsTuple)
+			throws Throwable {
+		OtpErlangObject[] params = paramsTuple.elements();
+		if (params.length != 3) {
+			// TODO: log
+			return;
+		}
+		String path = ((OtpErlangString) params[0]).stringValue();
+		byte[] data = ((OtpErlangBinary) params[1]).binaryValue();
+		List<ACL> acl = Ids.OPEN_ACL_UNSAFE;
+		// TODO: Extract this from the param 2
+		CreateMode createMode = CreateMode.EPHEMERAL;
+
+		String response = this.zooKeeper.create(path, data, acl, createMode);
+		this.mailbox.send(sender, new OtpErlangString(response));
 	}
 
 	void processZooKeeperMessage(OtpErlangPid sender, String command,
 			OtpErlangTuple params) throws Throwable {
 		if (command.equals("create")) {
 			this.create(sender, params);
+		} else if (command.equals("create-sync")) {
+			this.createSync(sender, params);
 		} else {
 			// TODO: Log error
 		}
