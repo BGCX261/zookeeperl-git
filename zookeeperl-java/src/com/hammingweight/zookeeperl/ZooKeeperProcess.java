@@ -92,18 +92,19 @@ public class ZooKeeperProcess implements Runnable {
 	void createSync(OtpErlangPid sender, OtpErlangTuple paramsTuple)
 			throws Throwable {
 		OtpErlangObject[] params = paramsTuple.elements();
-		if (params.length != 3) {
+		if (params.length != 4) {
 			// TODO: log
 			return;
 		}
-		String path = ((OtpErlangString) params[0]).stringValue();
-		byte[] data = ((OtpErlangBinary) params[1]).binaryValue();
+		OtpErlangObject uid = params[0];
+		String path = ((OtpErlangString) params[1]).stringValue();
+		byte[] data = ((OtpErlangBinary) params[2]).binaryValue();
 		List<ACL> acl = Ids.OPEN_ACL_UNSAFE;
-		// TODO: Extract this from the param 2
+		// TODO: Extract this from the param 3
 		CreateMode createMode = CreateMode.EPHEMERAL;
 
 		String response = this.zooKeeper.create(path, data, acl, createMode);
-		this.mailbox.send(sender, new OtpErlangString(response));
+		this.mailbox.send(sender, new OtpErlangTuple(new OtpErlangObject[]{uid, new OtpErlangString(response)}));
 	}
 
 	void processZooKeeperMessage(OtpErlangPid sender, String command,
