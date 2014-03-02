@@ -3,4 +3,6 @@ erlide.*
 rpc_monitor*.dump
 zookeeperl-java/bin
 zookeeperl/ebin/*.beam
+zookeeperl-java/.classpath
+zookeeperl-java/.settings/org.eclipse.jdt.core.prefs
 
