@@ -21,7 +21,7 @@
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
--record(state, {java_node, hosts, started=false}).
+-record(state, {java_process, hosts, started=false}).
 
 %% ====================================================================
 %% External functions
@@ -51,7 +51,7 @@ start_link(JavaNodeName, Hosts) ->
 %%          {stop, Reason}
 %% --------------------------------------------------------------------
 init([JavaNodeName, Hosts]) ->
-    {ok, #state{java_node=JavaNodeName, hosts=Hosts}, 0}.
+    {ok, #state{java_process={mailbox, JavaNodeName}, hosts=Hosts}, 0}.
 
 %% --------------------------------------------------------------------
 %% Function: handle_call/3
