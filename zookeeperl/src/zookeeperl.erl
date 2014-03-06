@@ -13,7 +13,8 @@
 
 %% --------------------------------------------------------------------
 %% External exports
--export([start/1,
+-export([create/4,
+		 start/1,
 		 start/2,
 		 start_link/1,
 		 start_link/2]).
@@ -26,6 +27,9 @@
 %% ====================================================================
 %% External functions
 %% ====================================================================
+create(Pid, Path, Data, Mode) ->
+	gen_server:call(Pid, {create, Path, Data, Mode}, infinity).
+
 start(Hosts) ->
 	start(random_string(16), Hosts).
 
@@ -63,8 +67,12 @@ init([JavaNodeName, Hosts]) ->
 %%          {stop, Reason, Reply, State}   | (terminate/2 is called)
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
-handle_call(Request, _From, State) ->
-    Reply = State,
+handle_call({create, Path, Data, Mode}, _From, State) ->
+	Uid = uid(),
+    State#state.java_process ! {self(), Uid, create_sync, {Path, Data, Mode}},
+	receive {Uid, Reply} ->
+				Reply
+	end,
     {reply, Reply, State}.
 
 %% --------------------------------------------------------------------
@@ -122,3 +130,6 @@ random_string(0, Res) ->
 random_string(Len, Res) ->
 	random_string(Len-1, [random_char()|Res]).
 	
+
+uid() ->
+	random_string(16).
