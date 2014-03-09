@@ -7,9 +7,9 @@ public class ZooKeeperlNode {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Throwable {
 		OtpNode node = new OtpNode("zookeeper");
-		ZooKeeperProcess zookeeper = new ZooKeeperProcess(node);
+		ZooKeeperProcess zookeeper = new ZooKeeperProcess(node, "localhost", 30000);
 		(new Thread(zookeeper)).start();
 	}
 

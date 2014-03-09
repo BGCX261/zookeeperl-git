@@ -9,10 +9,8 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 
-import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangBinary;
 import com.ericsson.otp.erlang.OtpErlangFun;
-import com.ericsson.otp.erlang.OtpErlangLong;
 import com.ericsson.otp.erlang.OtpErlangObject;
 import com.ericsson.otp.erlang.OtpErlangPid;
 import com.ericsson.otp.erlang.OtpErlangString;
@@ -27,46 +25,22 @@ public class ZooKeeperProcess implements Runnable {
 
 	private OtpMbox mailbox;
 
-	public ZooKeeperProcess(OtpNode node) {
-		this(node.createMbox("zookeeper"));
+	public ZooKeeperProcess(OtpNode node, String connectString, int sessionTimeout) throws Throwable {
+		this(node.createMbox("mbox"), connectString, sessionTimeout);
+		System.out.println(node.node());
 	}
 
-	ZooKeeperProcess(OtpMbox mailbox) {
+	ZooKeeperProcess(OtpMbox mailbox, String connectString, int sessionTimeout) throws Throwable {
 		this.mailbox = mailbox;
-	}
-
-	void processOpenZooKeeperConnection(final OtpErlangPid sender,
-			OtpErlangTuple message) throws Throwable {
-		OtpErlangObject[] messageAsArray = message.elements();
-
-		// There should be 3 entries in the tuple
-		if (messageAsArray.length != 3) {
-			// TODO: log error
-			return;
-		}
-
-		// The first entry in the tuple must be "open".
-		if (!((OtpErlangString) messageAsArray[0]).stringValue().equals("open")) {
-			// TODO: log error
-			return;
-		}
-
-		String connectString = ((OtpErlangString) messageAsArray[1])
-				.stringValue();
-		int sessionTimeout = ((OtpErlangLong) messageAsArray[2]).intValue();
 		Watcher watcher = new Watcher() {
 
 			@Override
 			public void process(WatchedEvent event) {
-				// TODO Auto-generated method stub
-				System.out.println("state changed");
-				ZooKeeperProcess.this.mailbox.send(sender, new OtpErlangAtom(
-						"stateChanged"));
+				// TODO log
 			}
 
 		};
 		this.zooKeeper = new ZooKeeper(connectString, sessionTimeout, watcher);
-		System.out.println(this.zooKeeper);
 	}
 
 	void create(OtpErlangPid sender, OtpErlangTuple paramsTuple)
@@ -121,17 +95,11 @@ public class ZooKeeperProcess implements Runnable {
 
 	public void processMessage(OtpErlangPid sender, OtpErlangTuple message)
 			throws Throwable {
-		if (this.zooKeeper == null) {
-			// If we haven't instantiated a ZooKeeper yet, the only command
-			// we'll accept is a command to create a ZooKeeper.
-			this.processOpenZooKeeperConnection(sender, message);
-		} else {
-			OtpErlangObject[] messageAsTuple = message.elements();
-			this.processZooKeeperMessage(
-					sender,
-					((OtpErlangString) messageAsTuple[0]).stringValue(),
-					new OtpErlangTuple(messageAsTuple, 1, messageAsTuple.length-1));
-		}
+		OtpErlangObject[] messageAsTuple = message.elements();
+		this.processZooKeeperMessage(
+				sender,
+				((OtpErlangString) messageAsTuple[0]).stringValue(),
+				new OtpErlangTuple(messageAsTuple, 1, messageAsTuple.length-1));
 	}
 
 	@Override
