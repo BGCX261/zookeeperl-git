@@ -26,7 +26,6 @@ public class ZooKeeperlNode {
 		};
 		ZooKeeper zookeeper = new ZooKeeper(args[0], 30000, watcher);
 		ZooKeeperlProcess proc = new ZooKeeperlProcess(zookeeper, mbox);
-		//ZooKeeperProcess zookeeper = new ZooKeeperProcess(node, "localhost", 30000);
 		(new Thread(proc)).start();
 	}
 
