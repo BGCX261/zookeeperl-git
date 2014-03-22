@@ -1,5 +1,10 @@
 package com.hammingweight.zookeeperl;
 
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper;
+
+import com.ericsson.otp.erlang.OtpMbox;
 import com.ericsson.otp.erlang.OtpNode;
 
 public class ZooKeeperlNode {
@@ -9,8 +14,20 @@ public class ZooKeeperlNode {
 	 */
 	public static void main(String[] args) throws Throwable {
 		OtpNode node = new OtpNode("zookeeper");
-		ZooKeeperProcess zookeeper = new ZooKeeperProcess(node, "localhost", 30000);
-		(new Thread(zookeeper)).start();
+		OtpMbox mbox = node.createMbox("mbox");
+		Watcher watcher = new Watcher() {
+
+			@Override
+			public void process(WatchedEvent event) {
+				// TODO log
+				System.out.println(event);
+			}
+
+		};
+		ZooKeeper zookeeper = new ZooKeeper(args[0], 30000, watcher);
+		ZooKeeperlProcess proc = new ZooKeeperlProcess(zookeeper, mbox);
+		//ZooKeeperProcess zookeeper = new ZooKeeperProcess(node, "localhost", 30000);
+		(new Thread(proc)).start();
 	}
 
 }
