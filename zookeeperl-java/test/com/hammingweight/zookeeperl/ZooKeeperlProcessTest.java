@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.ericsson.otp.erlang.OtpErlangAtom;
 import com.ericsson.otp.erlang.OtpErlangObject;
@@ -44,7 +45,17 @@ public class ZooKeeperlProcessTest {
 		zkProcess.processNextMessage();
 		
 		verify(mbox).receive();
-		verify(mbox).send(eq(pid), isA(OtpErlangObject.class));
+		
+		// We expect the process to send back a heartbeat_response
+		OtpErlangAtom respType = new OtpErlangAtom("heartbeat_response");
+		OtpErlangTuple respBody = new OtpErlangTuple(respType);
+	
+		ArgumentCaptor<OtpErlangTuple> arg = ArgumentCaptor.forClass(OtpErlangTuple.class);
+		verify(mbox).send(eq(pid), arg.capture());
+		OtpErlangTuple resp = arg.getValue();
+		assertEquals(uid, resp.elementAt(0));
+		assertEquals(respBody, resp.elementAt(1));
+		assertEquals(2, resp.arity());
 	}
 
 }
