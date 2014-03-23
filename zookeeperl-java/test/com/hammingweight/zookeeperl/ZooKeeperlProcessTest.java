@@ -102,4 +102,30 @@ public class ZooKeeperlProcessTest {
 		assertEquals(new OtpErlangString("/foobar"), respBody.elementAt(1));
 		assertEquals(2, resp.arity());
 	}
+
+	@Test
+	public void testCreateSyncPersistent() throws Throwable {
+		ZooKeeper zookeeper = mock(ZooKeeper.class);
+		OtpMbox mbox = mock(OtpMbox.class);
+		ZooKeeperlProcess zkProcess = new ZooKeeperlProcess(zookeeper, mbox);
+		
+		// Expect a create message
+		OtpErlangPid pid = mock(OtpErlangPid.class);
+		OtpErlangAtom uid = new OtpErlangAtom("uid");
+		OtpErlangAtom msgType = new OtpErlangAtom("create_sync");
+		OtpErlangString path = new OtpErlangString("/foobar");
+		OtpErlangBinary data = new OtpErlangBinary(new byte[7]);
+		OtpErlangAtom createMode = new OtpErlangAtom("persistent");
+		OtpErlangTuple msgBody = new OtpErlangTuple(new OtpErlangObject[]{msgType, path, data, createMode});
+		OtpErlangTuple msg = new OtpErlangTuple(new OtpErlangObject[]{pid, uid, msgBody});
+		
+		when(mbox.receive()).thenReturn(msg);
+
+		zkProcess.processNextMessage();
+		
+		verify(mbox).receive();
+
+		// We expect the ZooKeeper process to receive a create message
+		verify(zookeeper).create(eq("/foobar"), any(byte[].class), eq(Ids.OPEN_ACL_UNSAFE), eq(CreateMode.PERSISTENT));
+	}
 }
