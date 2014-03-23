@@ -1,11 +1,15 @@
 package com.hammingweight.zookeeperl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.ACL;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -16,8 +20,6 @@ import com.ericsson.otp.erlang.OtpErlangPid;
 import com.ericsson.otp.erlang.OtpErlangString;
 import com.ericsson.otp.erlang.OtpErlangTuple;
 import com.ericsson.otp.erlang.OtpMbox;
-
-import static org.mockito.Mockito.*;
 
 public class ZooKeeperlProcessTest {
 
@@ -73,7 +75,7 @@ public class ZooKeeperlProcessTest {
 		OtpErlangPid pid = mock(OtpErlangPid.class);
 		OtpErlangAtom uid = new OtpErlangAtom("uid");
 		OtpErlangAtom msgType = new OtpErlangAtom("create_sync");
-		OtpErlangString path = new OtpErlangString("/foo");
+		OtpErlangString path = new OtpErlangString("/foobar");
 		OtpErlangBinary data = new OtpErlangBinary(new byte[7]);
 		OtpErlangAtom createMode = new OtpErlangAtom("ephemeral");
 		OtpErlangTuple msgBody = new OtpErlangTuple(new OtpErlangObject[]{msgType, path, data, createMode});
@@ -86,6 +88,6 @@ public class ZooKeeperlProcessTest {
 		verify(mbox).receive();
 
 		// We expect the ZooKeeper process to receive a create message
-		verify(zookeeper).create(any(String.class), any(byte[].class), eq(Ids.OPEN_ACL_UNSAFE), eq(CreateMode.EPHEMERAL));
+		verify(zookeeper).create(eq("/foobar"), any(byte[].class), eq(Ids.OPEN_ACL_UNSAFE), eq(CreateMode.EPHEMERAL));
 	}
 }
