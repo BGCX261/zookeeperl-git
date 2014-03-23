@@ -82,6 +82,7 @@ public class ZooKeeperlProcessTest {
 		OtpErlangTuple msg = new OtpErlangTuple(new OtpErlangObject[]{pid, uid, msgBody});
 		
 		when(mbox.receive()).thenReturn(msg);
+		when(zookeeper.create(eq("/foobar"), any(byte[].class), eq(Ids.OPEN_ACL_UNSAFE), eq(CreateMode.EPHEMERAL))).thenReturn("/foobar");
 
 		zkProcess.processNextMessage();
 		
@@ -89,5 +90,16 @@ public class ZooKeeperlProcessTest {
 
 		// We expect the ZooKeeper process to receive a create message
 		verify(zookeeper).create(eq("/foobar"), any(byte[].class), eq(Ids.OPEN_ACL_UNSAFE), eq(CreateMode.EPHEMERAL));
+		
+		// A create response message should be sent back.
+		ArgumentCaptor<OtpErlangTuple> arg = ArgumentCaptor.forClass(OtpErlangTuple.class);
+		verify(mbox).send(eq(pid), arg.capture());
+		OtpErlangTuple resp = arg.getValue();
+		assertEquals(uid, resp.elementAt(0));
+		OtpErlangTuple respBody = (OtpErlangTuple) resp.elementAt(1);
+		assertEquals(2, respBody.arity());
+		assertEquals(msgType, respBody.elementAt(0));
+		assertEquals(new OtpErlangString("/foobar"), respBody.elementAt(1));
+		assertEquals(2, resp.arity());
 	}
 }

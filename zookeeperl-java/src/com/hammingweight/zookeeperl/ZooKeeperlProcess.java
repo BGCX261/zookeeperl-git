@@ -30,9 +30,12 @@ public class ZooKeeperlProcess implements Runnable {
 	}
 	
 	private void processCreateSync(OtpErlangPid pid, OtpErlangObject uid, OtpErlangTuple msgBody) throws Throwable {
+		OtpErlangAtom command = (OtpErlangAtom) msgBody.elementAt(0);
 		OtpErlangString path = (OtpErlangString) msgBody.elementAt(1);
 		OtpErlangBinary data = (OtpErlangBinary) msgBody.elementAt(2);
-		this.zookeeper.create(path.stringValue(), data.binaryValue(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+		OtpErlangString respPath = new OtpErlangString(zookeeper.create(path.stringValue(), data.binaryValue(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL));
+		OtpErlangTuple resp = new OtpErlangTuple(new OtpErlangObject[] {uid, new OtpErlangTuple(new OtpErlangObject[]{command, respPath})});
+		this.mbox.send(pid, resp);
 	}
 	
 	void processNextMessage() {
