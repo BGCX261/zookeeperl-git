@@ -53,8 +53,8 @@ public class ZooKeeperlProcessTest {
 		
 		verify(mbox).receive();
 		
-		// We expect the process to send back a heartbeat_response
-		OtpErlangAtom respType = new OtpErlangAtom("heartbeat");
+		// We expect the process to send back an ok
+		OtpErlangAtom respType = new OtpErlangAtom("ok");
 		OtpErlangTuple respBody = new OtpErlangTuple(respType);
 	
 		ArgumentCaptor<OtpErlangTuple> arg = ArgumentCaptor.forClass(OtpErlangTuple.class);
@@ -92,15 +92,16 @@ public class ZooKeeperlProcessTest {
 		verify(zookeeper).create(eq("/foobar"), any(byte[].class), eq(Ids.OPEN_ACL_UNSAFE), eq(CreateMode.EPHEMERAL));
 		
 		// A create response message should be sent back.
+		// The response should = {UID, {ok, "/foobar"}}, 
 		ArgumentCaptor<OtpErlangTuple> arg = ArgumentCaptor.forClass(OtpErlangTuple.class);
 		verify(mbox).send(eq(pid), arg.capture());
 		OtpErlangTuple resp = arg.getValue();
+		assertEquals(2, resp.arity());
 		assertEquals(uid, resp.elementAt(0));
 		OtpErlangTuple respBody = (OtpErlangTuple) resp.elementAt(1);
 		assertEquals(2, respBody.arity());
-		assertEquals(msgType, respBody.elementAt(0));
+		assertEquals(new OtpErlangAtom("ok"), respBody.elementAt(0));
 		assertEquals(new OtpErlangString("/foobar"), respBody.elementAt(1));
-		assertEquals(2, resp.arity());
 	}
 
 	@Test

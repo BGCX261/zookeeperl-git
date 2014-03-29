@@ -23,14 +23,13 @@ public class ZooKeeperlProcess implements Runnable {
 		this.mbox = mbox;
 	}
 	
-	private void processHeartbeat(OtpErlangPid pid, OtpErlangObject uid, OtpErlangTuple msgBody) {
-		OtpErlangAtom command = (OtpErlangAtom) msgBody.elementAt(0);
-		OtpErlangTuple resp = new OtpErlangTuple(new OtpErlangObject[] {uid, new OtpErlangTuple(command)});
+	private void processHeartbeat(OtpErlangPid pid, OtpErlangObject uid) {
+		OtpErlangAtom okResp = new OtpErlangAtom("ok");
+		OtpErlangTuple resp = new OtpErlangTuple(new OtpErlangObject[] {uid, new OtpErlangTuple(okResp)});
 		this.mbox.send(pid, resp);
 	}
 	
 	private void processCreateSync(OtpErlangPid pid, OtpErlangObject uid, OtpErlangTuple msgBody) throws Throwable {
-		OtpErlangAtom command = (OtpErlangAtom) msgBody.elementAt(0);
 		OtpErlangString path = (OtpErlangString) msgBody.elementAt(1);
 		OtpErlangBinary data = (OtpErlangBinary) msgBody.elementAt(2);
 		CreateMode createMode = CreateMode.EPHEMERAL;
@@ -38,7 +37,7 @@ public class ZooKeeperlProcess implements Runnable {
 			createMode = CreateMode.PERSISTENT;
 		}
 		OtpErlangString respPath = new OtpErlangString(zookeeper.create(path.stringValue(), data.binaryValue(), Ids.OPEN_ACL_UNSAFE, createMode));
-		OtpErlangTuple resp = new OtpErlangTuple(new OtpErlangObject[] {uid, new OtpErlangTuple(new OtpErlangObject[]{command, respPath})});
+		OtpErlangTuple resp = new OtpErlangTuple(new OtpErlangObject[] {uid, new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangAtom("ok"), respPath})});
 		this.mbox.send(pid, resp);
 	}
 	
@@ -49,7 +48,7 @@ public class ZooKeeperlProcess implements Runnable {
 			OtpErlangObject uid = msg.elementAt(1);
 			OtpErlangTuple msgBody = (OtpErlangTuple) msg.elementAt(2);
 			if (msgBody.elementAt(0).equals(new OtpErlangAtom("heartbeat"))) {
-				processHeartbeat(pid, uid, msgBody);
+				processHeartbeat(pid, uid);
 			}
 			else if (msgBody.elementAt(0).equals(new OtpErlangAtom("create_sync"))) {
 				processCreateSync(pid, uid, msgBody);
